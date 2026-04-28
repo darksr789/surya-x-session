@@ -1,0 +1,20 @@
+{
+  "name": "surya-x-session",
+  "version": "1.1.0",
+  "description": "Premium Session Generator for SURYA-X",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "latest",
+    "express": "^4.19.2",
+    "pino": "^9.0.0",
+    "qrcode": "^1.5.3",
+    "fs-extra": "^11.2.0",
+    "axios": "^1.6.8"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
