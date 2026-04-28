@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SURYA-X | QR Generator</title>
+    <style>
+        body { background: #050505; color: #00ffff; font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .qr-box { background: #111; padding: 30px; border-radius: 20px; display: inline-block; border: 2px solid #00ffff; margin-top: 20px; }
+        img { width: 250px; height: 250px; border: 10px solid white; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>SCAN QR CODE</h1>
+    <div class="qr-box" id="qr-display">
+        <p>GENERATING QR... PLEASE WAIT</p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script>
+        async function loadQR() {
+            try {
+                const { data } = await axios.get('/qr-logic');
+                if(data.qr) {
+                    document.getElementById('qr-display').innerHTML = `<img src="${data.qr}">`;
+                }
+            } catch (e) { document.getElementById('qr-display').innerText = "FAILED TO LOAD QR"; }
+        }
+        loadQR();
+    </script>
+</body>
+</html>
