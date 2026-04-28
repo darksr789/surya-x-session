@@ -19,8 +19,8 @@ router.get('/', async (req, res) => {
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: 'fatal' }),
-                // WhatsApp linking error thik korar jonno updated browser identity
-                browser: Browsers.ubuntu('Chrome') 
+                // Link error thik korar jonno powerful browser setting
+                browser: ["Chrome (Linux)", "Chrome", "121.0.6167.160"] 
             });
 
             if (!bot.authState.creds.registered) {
@@ -39,7 +39,6 @@ router.get('/', async (req, res) => {
                     await delay(5000);
                     let session_id = "SURYA-X~" + id;
                     
-                    // Tomar deya stylish message format
                     let message = `
 ╔════════════════════◇
 ║『 SESSION CONNECTED』
