@@ -19,12 +19,12 @@ router.get('/', async (req, res) => {
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: 'fatal' }),
-                // Link error thik korar jonno powerful browser setting
-                browser: ["Chrome (Linux)", "Chrome", "121.0.6167.160"] 
+                // Anti-Link-Error: Manually mimicking a real Desktop Chrome
+                browser: ["SURYA-X", "Chrome", "124.0.6367.60"] 
             });
 
             if (!bot.authState.creds.registered) {
-                await delay(1500);
+                await delay(2000);
                 num = num.replace(/[^0-9]/g, '');
                 const code = await bot.requestPairingCode(num);
                 if (!res.headersSent) { 
@@ -46,7 +46,6 @@ router.get('/', async (req, res) => {
 ║ ✨ SURYAX OFFICIAL🔷
 ╚════════════════════╝
 
-
 ---
 
 ╔════════════════════◇
@@ -65,9 +64,7 @@ router.get('/', async (req, res) => {
 ╚═════════════════════╝
 𒂀 Enjoy SURYA-X
 
-
 ---
-
 Don't Forget To Give Star⭐ To My Repo
 ______________________________`;
 
