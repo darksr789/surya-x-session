@@ -19,7 +19,8 @@ router.get('/', async (req, res) => {
                 },
                 printQRInTerminal: false,
                 logger: pino({ level: 'fatal' }),
-                browser: Browsers.macOS('Chrome')
+                // WhatsApp linking error thik korar jonno updated browser identity
+                browser: Browsers.ubuntu('Chrome') 
             });
 
             if (!bot.authState.creds.registered) {
@@ -38,12 +39,14 @@ router.get('/', async (req, res) => {
                     await delay(5000);
                     let session_id = "SURYA-X~" + id;
                     
+                    // Tomar deya stylish message format
                     let message = `
 ╔════════════════════◇
 ║『 SESSION CONNECTED』
 ║ ✨ SURYA-X 🔷
 ║ ✨ SURYAX OFFICIAL🔷
 ╚════════════════════╝
+
 
 ---
 
@@ -63,8 +66,11 @@ router.get('/', async (req, res) => {
 ╚═════════════════════╝
 𒂀 Enjoy SURYA-X
 
+
 ---
-Don't Forget To Give Star⭐ To My Repo`;
+
+Don't Forget To Give Star⭐ To My Repo
+______________________________`;
 
                     await bot.sendMessage(bot.user.id, { text: message });
                     await delay(2000);
