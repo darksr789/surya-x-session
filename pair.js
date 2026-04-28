@@ -1,112 +1,74 @@
-const PastebinAPI = require('pastebin-js');
-const pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL');
 const { makeid } = require('./id');
 const express = require('express');
-const fs = require('fs');
-let router = express.Router();
 const pino = require('pino');
-const {
-    default: DARK_SURYA,
-    useMultiFileAuthState,
-    delay,
-    makeCacheableSignalKeyStore,
-    Browsers
-} = require('@whiskeysockets/baileys');
-
-function removeFile(FilePath) {
-    if (!fs.existsSync(FilePath)) return false;
-    fs.rmSync(FilePath, { recursive: true, force: true });
-}
+const fs = require('fs-extra');
+const { default: DARK_SURYA, useMultiFileAuthState, delay, makeCacheableSignalKeyStore } = require('@whiskeysockets/baileys');
+let router = express.Router();
 
 router.get('/', async (req, res) => {
     const id = makeid();
     let num = req.query.number;
     
-    async function SURYA_X_PAIR_CODE() {
+    async function SURYA_X_PAIR() {
         const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
         try {
-            let Pair_Code_By_DARK_SURYA = DARK_SURYA({
-                auth: {
-                    creds: state.creds,
-                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
+            let bot = DARK_SURYA({
+                auth: { 
+                    creds: state.creds, 
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' })) 
                 },
                 printQRInTerminal: false,
-                logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
-                browser: Browsers.macOS('Chrome')
+                logger: pino({ level: 'fatal' }),
+                // High-End Desktop Browser Simulation to avoid Link Error
+                browser: ["SURYA-X", "Chrome", "124.0.6367.60"] 
             });
 
-            if (!Pair_Code_By_DARK_SURYA.authState.creds.registered) {
-                await delay(1500);
+            if (!bot.authState.creds.registered) {
+                await delay(2000);
                 num = num.replace(/[^0-9]/g, '');
-                const code = await Pair_Code_By_DARK_SURYA.requestPairingCode(num);
-                if (!res.headersSent) {
-                    await res.send({ code });
-                }
+                const code = await bot.requestPairingCode(num);
+                if (!res.headersSent) { await res.send({ code }); }
             }
 
-            Pair_Code_By_DARK_SURYA.ev.on('creds.update', saveCreds);
-            Pair_Code_By_DARK_SURYA.ev.on('connection.update', async (s) => {
-                const { connection, lastDisconnect } = s;
+            bot.ev.on('creds.update', saveCreds);
+            bot.ev.on('connection.update', async (s) => {
+                const { connection } = s;
                 if (connection === 'open') {
                     await delay(5000);
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    await delay(800);
-                    let b64data = Buffer.from(data).toString('base64');
-                    let session = await Pair_Code_By_DARK_SURYA.sendMessage(Pair_Code_By_DARK_SURYA.user.id, { text: 'SURYA-X~' + b64data });
-
-                    let SURYA_X_TEXT = `
-        
-╔════════════════════◇
+                    let session_id = "SURYA-X~" + id;
+                    let message = `╔════════════════════◇
 ║『 SESSION CONNECTED』
 ║ ✨ SURYA-X 🔷
 ║ ✨ SURYAX OFFICIAL🔷
 ╚════════════════════╝
 
-
 ---
-
 ╔════════════════════◇
 ║『 YOU'VE CHOSEN SURYA-X 』
 ║ -Set the session ID in Heroku:
-║ - SESSION_ID: 
+║ - SESSION_ID: ${session_id}
 ╚════════════════════╝
 ╔════════════════════◇
 ║ 『••• _V𝗶𝘀𝗶𝘁 𝗙𝗼𝗿_H𝗲𝗹𝗽 •••』
 ║❍ 𝐎𝐰𝐧𝐞𝐫: +917797099719
 ║❍ 𝐑𝐞𝐩𝐨: https://github.com/darksurya345/SURYA-X 
 ║❍ 𝐖𝐚𝐆𝗿𝐨𝐮𝐩: https://chat.whatsapp.com/?mode=wwt
-║❍ 𝐖𝐚𝐂𝐡𝐚𝐧𝐧𝐞𝐥: https://whatsapp.com/channel/0029Vb64JNKJf05UHKREBM1h
+║❍ 𝐖𝐚𝐂𝐡𝐚𝗻𝗻𝗲𝗹: https://whatsapp.com/channel/0029Vb64JNKJf05UHKREBM1h
 ║
 ║ ☬ ☬ ☬ ☬
 ╚═════════════════════╝
 𒂀 Enjoy SURYA-X
 
-
 ---
+Don't Forget To Give Star⭐ To My Repo`;
 
-Don't Forget To Give Star⭐ To My Repo
-______________________________`;
-
-                    await Pair_Code_By_DARK_SURYA.sendMessage(Pair_Code_By_DARK_SURYA.user.id, { text: SURYA_X_TEXT }, { quoted: session });
-
-                    await delay(100);
-                    await Pair_Code_By_DARK_SURYA.ws.close();
-                    return await removeFile('./temp/' + id);
-                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(10000);
-                    SURYA_X_PAIR_CODE();
+                    await bot.sendMessage(bot.user.id, { text: message });
+                    await delay(2000);
+                    await fs.remove('./temp/' + id);
                 }
             });
-        } catch (err) {
-            console.log('Service restarted');
-            await removeFile('./temp/' + id);
-            if (!res.headersSent) {
-                await res.send({ code: 'Service Currently Unavailable' });
-            }
-        }
+        } catch (err) { if(!res.headersSent) res.send({ code: "Error" }); }
     }
-    
-    return await SURYA_X_PAIR_CODE();
+    SURYA_X_PAIR();
 });
-
 module.exports = router;
